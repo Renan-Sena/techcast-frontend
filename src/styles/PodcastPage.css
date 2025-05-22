@@ -1,0 +1,16 @@
+.podcast-detail {
+    background-color: #f8f8f8;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 20px 0;
+  }
+  
+  .podcast-detail h2 {
+    color: #0056b3; /* Azul */
+  }
+  
+  .podcast-detail p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  

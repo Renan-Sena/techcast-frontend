@@ -1,0 +1,18 @@
+/* Estilos globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    padding: 20px;
+  }
+  
+  h1, h2, h3 {
+    color: #0056b3; /* Azul */
+  }
+  

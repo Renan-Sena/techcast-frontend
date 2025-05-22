@@ -1,0 +1,16 @@
+.podcast-card {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+  }
+  
+  .podcast-card h3 {
+    color: #0056b3; /* Azul */
+  }
+  
+  .podcast-card p {
+    color: #333;
+  }
+  

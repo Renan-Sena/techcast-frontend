@@ -1,0 +1,11 @@
+.header {
+    background-color: #0056b3; /* Azul */
+    color: white;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .header h1 {
+    margin: 0;
+  }
+  
