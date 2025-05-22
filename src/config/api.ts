@@ -1,1 +1,1 @@
-export const API_BASE_URL = 'http://localhost:3000/'; // Coloque aqui a URL do seu backend Render
+export const API_BASE_URL = 'http://localhost:3000/';
