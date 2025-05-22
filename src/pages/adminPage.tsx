@@ -238,7 +238,7 @@
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/api/episodes/${episodeId}`, {
+    const res = await fetch(`${API_BASE_URL}/api/episodes/${episodeId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     });
