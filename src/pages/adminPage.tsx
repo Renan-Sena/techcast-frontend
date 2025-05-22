@@ -12,7 +12,7 @@
   } from '@fortawesome/free-solid-svg-icons';
   import AdminNavbar from './NavBars/AdminNavbar';
   import { Navigate, useNavigate } from 'react-router';
-  import { API_BASE_URL } from '@/config/api';
+  import { API_BASE_URL } from '../config/api';
   
   interface User {
     id: number;
