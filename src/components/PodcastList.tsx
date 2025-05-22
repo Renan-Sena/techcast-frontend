@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getPodcasts } from '../services/api';
+import { fetchEpisodes } from '../services/api';
 import PodcastCard from './PodcastCard';
 import '../styles/PodcastList.css';
 
@@ -9,7 +9,8 @@ const PodcastList: React.FC = () => {
   useEffect(() => {
     const fetchPodcasts = async () => {
       try {
-        const data = await getPodcasts();
+        const token = localStorage.getItem('token') || '';
+        const data = await fetchEpisodes(token);
         setPodcasts(data);
       } catch (error) {
         console.error('Error fetching podcasts:', error);
