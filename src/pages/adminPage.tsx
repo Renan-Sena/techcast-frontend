@@ -14,9 +14,6 @@
   import { Navigate, useNavigate } from 'react-router';
   import { API_BASE_URL } from '@/config/api';
   
-  // const navigate = useNavigate();
-
-
   interface User {
     id: number;
     username: string;
