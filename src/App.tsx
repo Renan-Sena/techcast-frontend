@@ -10,7 +10,7 @@ import ProfilePage from './pages/profilePage';
 import AdminPage from './pages/adminPage';
 
 import { PlayerProvider } from './pages/NavBars/PlayerContext';  // ✅ ajuste o caminho conforme onde salvar
-import PlayerBar from './pages/NavBars/PlayBAr';               // ✅ ajuste o caminho conforme onde salvar
+import PlayerBar from './pages/NavBars/PlayBar';               // ✅ ajuste o caminho conforme onde salvar
 
 function NotFound() {
   return <h1>Página não encontrada</h1>;
