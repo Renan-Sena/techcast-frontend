@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../config/api';  // IMPORTANDO API_BASE_URL
 
 const HomePage: React.FC = () => {
   const [username, setUsername] = useState(''); 
@@ -16,7 +17,7 @@ const HomePage: React.FC = () => {
     e.preventDefault();
     setErrorMessage('');
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', {
+      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {  // usa API_BASE_URL aqui
         username,
         email,
         password,
@@ -49,7 +50,7 @@ const HomePage: React.FC = () => {
     }
 
     try {
-      await axios.post('http://localhost:3000/api/auth/register', {
+      await axios.post(`${API_BASE_URL}/api/auth/register`, {  // usa API_BASE_URL aqui
         username,
         email,
         password,
@@ -227,14 +228,5 @@ const styles: { [key: string]: React.CSSProperties } = {
     animation: 'fadeIn 0.5s forwards',
   },
 };
-
-// Animations CSS (se estiver usando CSS global, adicione no seu CSS):
-/*
-@keyframes fadeIn {
-  to {
-    opacity: 1;
-  }
-}
-*/
 
 export default HomePage;

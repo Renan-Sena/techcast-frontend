@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faSearch, faBookOpen, faMicrophone } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { API_BASE_URL } from '../config/api'; // ajuste o caminho conforme seu projeto
 
 const CreatePodcastPage: React.FC = () => {
   const [title, setTitle] = useState('');
@@ -41,7 +42,7 @@ const CreatePodcastPage: React.FC = () => {
     formData.append('audio', audio);
 
     try {
-      await axios.post('http://localhost:3000/api/episodes/upload', formData, {
+      await axios.post(`${API_BASE_URL}/api/episodes/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('Podcast criado com sucesso!');

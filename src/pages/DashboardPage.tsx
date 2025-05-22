@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DashboardNavbar from './NavBars/ListenerNavbar';
-import axios from 'axios';
+import { API_BASE_URL } from '../config/api';
 import { Podcast } from '../types/Podcast';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,11 +23,16 @@ const DashboardPage: React.FC = () => {
     const fetchPodcasts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:3000/api/episodes');
-        setPodcasts(response.data);
+        setError('');
+
+        const res = await fetch(`${API_BASE_URL}/api/episodes`);
+        if (!res.ok) throw new Error('Erro ao carregar podcasts');
+        const data = await res.json();
+
+        setPodcasts(data);
       } catch (err) {
-        setError('Erro ao carregar podcasts.');
         console.error(err);
+        setError('Erro ao carregar podcasts.');
       } finally {
         setLoading(false);
       }
@@ -49,7 +54,7 @@ const DashboardPage: React.FC = () => {
     <div style={styles.page}>
       <DashboardNavbar userName={user?.name} />
 
-        <div style={styles.content}>
+      <div style={styles.content}>
         <div style={styles.header}>
           <h1 style={styles.title}>Bem-vindo(a), {user?.username || 'Usuário'}!</h1>
           <p style={styles.subtitle}>Confira os podcasts disponíveis:</p>
@@ -64,7 +69,7 @@ const DashboardPage: React.FC = () => {
             return (
               <div key={podcast.id} style={styles.card}>
                 <img
-                  src={`http://localhost:3000${podcast.imageUrl}`}
+                  src={`${API_BASE_URL}${podcast.imageUrl}`}
                   alt={podcast.title}
                   style={styles.cardImage}
                 />
@@ -146,7 +151,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardTitle: {
     fontSize: '1.2rem',
-    margin: '0',
+    margin: 0,
     color: '#fff',
     fontWeight: 'bold',
   },
@@ -166,13 +171,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     backgroundColor: '#1E90FF',
     transition: 'all 0.3s ease',
-  } as React.CSSProperties,
-  duration: {
-    position: 'absolute',
-    bottom: '8px',
-    right: '8px',
-    fontSize: '0.75rem',
-    color: '#ccc',
   },
 };
 

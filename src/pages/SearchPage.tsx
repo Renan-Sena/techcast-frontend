@@ -6,6 +6,7 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { usePlayer } from './NavBars/PlayerContext';
 import { Podcast } from '../types/Podcast';
+import { API_BASE_URL } from '../config/api';  // <-- Importa a URL base da API
 
 const SearchPage: React.FC = () => {
   const location = useLocation();
@@ -24,7 +25,7 @@ const SearchPage: React.FC = () => {
       setFilteredUsers([]);
     } else {
       axios
-        .get('http://localhost:3000/api/episodes', { params: { searchTerm: searchQuery } })
+        .get(`${API_BASE_URL}/api/episodes`, { params: { searchTerm: searchQuery } }) // <-- usa API_BASE_URL
         .then((response) => {
           setFilteredPodcasts(response.data);
         })
@@ -73,8 +74,7 @@ const SearchPage: React.FC = () => {
 
         {searchQuery === '' ? (
           <div style={{ padding: '2rem' }}>
-            {/* <h2>Explore por disciplina:</h2> */}
-            {/* Outros conteúdos */}
+            {/* Conteúdo quando não tem busca */}
           </div>
         ) : (
           <div style={styles.podcastList}>
@@ -84,7 +84,7 @@ const SearchPage: React.FC = () => {
                 return (
                   <div key={podcast.id} style={styles.card}>
                     <img
-                      src={`http://localhost:3000${podcast.imageUrl}`}
+                      src={`${API_BASE_URL}${podcast.imageUrl}`} // <-- usa API_BASE_URL
                       alt={podcast.title}
                       style={styles.cardImage}
                       onError={(e) => (e.currentTarget.src = '/default.jpg')}
