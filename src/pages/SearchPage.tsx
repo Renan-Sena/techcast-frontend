@@ -7,6 +7,8 @@ import axios from 'axios';
 import { usePlayer } from './NavBars/PlayerContext';
 import { Podcast } from '../types/Podcast';
 import { API_BASE_URL } from '../config/api';  // <-- Importa a URL base da API
+import { fetchEpisodes } from '../services/api';
+
 
 const SearchPage: React.FC = () => {
   const location = useLocation();
