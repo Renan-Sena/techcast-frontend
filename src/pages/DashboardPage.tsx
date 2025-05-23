@@ -26,6 +26,7 @@ const DashboardPage: React.FC = () => {
         setError('');
 
         const res = await fetch(`${API_BASE_URL}/api/episodes`);
+        console.log('fetch apisodes');
         if (!res.ok) throw new Error('Erro ao carregar podcasts');
         const data = await res.json();
 
