@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { usePlayer } from './PlayerContext';
-import { API_BASE_URL } from '@/config/api';
+import { API_BASE_URL } from '../../config/api';
 
 const PlayerBar: React.FC = () => {
   const { currentPodcast, setCurrentPodcast, isPlaying, setIsPlaying } = usePlayer();
