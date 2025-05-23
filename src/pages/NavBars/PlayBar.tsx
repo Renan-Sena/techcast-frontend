@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { usePlayer } from './PlayerContext';
+import { API_BASE_URL } from '@/config/api';
 
 const PlayerBar: React.FC = () => {
   const { currentPodcast, setCurrentPodcast, isPlaying, setIsPlaying } = usePlayer();
@@ -138,7 +139,7 @@ const PlayerBar: React.FC = () => {
       title="Clique e arraste para mover a barra"
     >
       <img
-        src={`http://localhost:3000${currentPodcast.imageUrl}`}
+        src={`${API_BASE_URL}${currentPodcast.imageUrl}`}
         alt={currentPodcast.title}
         style={styles.cover}
         draggable={false}
@@ -179,7 +180,7 @@ const PlayerBar: React.FC = () => {
 
       <audio
         ref={audioRef}
-        src={`http://localhost:3000${currentPodcast.audioUrl}`}
+        src={`${currentPodcast.audioUrl}`}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleClose}
       />
