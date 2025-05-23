@@ -152,7 +152,7 @@
     formData.append('image', newEpisodeImage);  // ✅ agora correto
     formData.append('audio', newEpisodeAudio);  // ✅ agora correto
     
-    const res = await fetch(`${API_BASE_URL}/api/admin/episodes`, {
+    const res = await fetch(`${API_BASE_URL}/api/episodes`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
