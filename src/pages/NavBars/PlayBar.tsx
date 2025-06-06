@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { usePlayer } from './PlayerContext';
+import { API_BASE_URL } from '../../config/api';
 
 const PlayerBar: React.FC = () => {
   const { currentPodcast, setCurrentPodcast, isPlaying, setIsPlaying } = usePlayer();
@@ -11,22 +11,18 @@ const PlayerBar: React.FC = () => {
 
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
-
   const [draggingBar, setDraggingBar] = useState(false);
   const [posX, setPosX] = useState(0);
   const dragStartX = useRef(0);
   const dragStartPosX = useRef(0);
-
   const [draggingProgress, setDraggingProgress] = useState(false);
+
+  // Helper para montar URLs completas se necessário
+  const getFullUrl = (url: string) => url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
 
   useEffect(() => {
     if (!audioRef.current) return;
-
-    if (isPlaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
+    isPlaying ? audioRef.current.play() : audioRef.current.pause();
   }, [isPlaying, currentPodcast]);
 
   const handleTimeUpdate = () => {
@@ -43,9 +39,7 @@ const PlayerBar: React.FC = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  const togglePlay = () => {
-    setIsPlaying(!isPlaying);
-  };
+  const togglePlay = () => setIsPlaying(!isPlaying);
 
   const handleClose = () => {
     setIsPlaying(false);
@@ -59,7 +53,6 @@ const PlayerBar: React.FC = () => {
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if ((e.target as HTMLElement).dataset.progressBar) return;
-
     setDraggingBar(true);
     dragStartX.current = e.clientX;
     dragStartPosX.current = posX;
@@ -70,18 +63,15 @@ const PlayerBar: React.FC = () => {
     if (draggingBar) {
       let newPos = dragStartPosX.current + (e.clientX - dragStartX.current);
       const containerWidth = containerRef.current?.offsetWidth || 0;
-      const windowWidth = window.innerWidth;
-      const maxPos = windowWidth - containerWidth;
-      if (newPos < 0) newPos = 0;
-      if (newPos > maxPos) newPos = maxPos;
+      const maxPos = window.innerWidth - containerWidth;
+      newPos = Math.min(Math.max(newPos, 0), maxPos);
       setPosX(newPos);
     } else if (draggingProgress && audioRef.current && duration) {
       const progressBar = document.getElementById('progress-bar');
       if (!progressBar) return;
-
       const rect = progressBar.getBoundingClientRect();
       let relativeX = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
-      let newTime = (relativeX / rect.width) * duration;
+      const newTime = (relativeX / rect.width) * duration;
       audioRef.current.currentTime = newTime;
       setProgress(newTime);
     }
@@ -100,7 +90,6 @@ const PlayerBar: React.FC = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     }
-
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -109,19 +98,17 @@ const PlayerBar: React.FC = () => {
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current || !duration) return;
-
     const rect = e.currentTarget.getBoundingClientRect();
     let relativeX = Math.min(Math.max(e.clientX - rect.left, 0), rect.width);
-    let newTime = (relativeX / rect.width) * duration;
+    const newTime = (relativeX / rect.width) * duration;
     audioRef.current.currentTime = newTime;
     setProgress(newTime);
   };
 
   const handleProgressMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-  setDraggingProgress(true);
-  handleProgressClick(e);
-};
-
+    setDraggingProgress(true);
+    handleProgressClick(e);
+  };
 
   if (!currentPodcast) return null;
 
@@ -139,7 +126,7 @@ const PlayerBar: React.FC = () => {
       title="Clique e arraste para mover a barra"
     >
       <img
-        src={`http://localhost:3000${currentPodcast.imageUrl}`}
+        src={getFullUrl(currentPodcast.imageUrl)}
         alt={currentPodcast.title}
         style={styles.cover}
         draggable={false}
@@ -167,8 +154,6 @@ const PlayerBar: React.FC = () => {
       <button
         onClick={togglePlay}
         style={styles.playButton}
-        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#063970')}
-        onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#104E8B')}
         title={isPlaying ? 'Pausar' : 'Tocar'}
       >
         <FontAwesomeIcon icon={isPlaying ? faPause : faPlay} color="#fff" />
@@ -180,7 +165,7 @@ const PlayerBar: React.FC = () => {
 
       <audio
         ref={audioRef}
-        src={`http://localhost:3000${currentPodcast.audioUrl}`}
+        src={getFullUrl(currentPodcast.audioUrl)}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleClose}
       />
@@ -211,7 +196,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: 6,
     objectFit: 'cover',
     flexShrink: 0,
-    userSelect: 'none',
   },
   info: {
     flex: 1,
@@ -219,7 +203,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
-    userSelect: 'none',
   },
   title: {
     fontWeight: 'bold',
@@ -239,13 +222,12 @@ const styles: { [key: string]: React.CSSProperties } = {
     borderRadius: 3,
     overflow: 'hidden',
     marginTop: 4,
-    userSelect: 'none',
   },
   progressBarFill: {
     height: '100%',
     backgroundColor: '#fff',
     borderRadius: 3,
-    transition: 'width 0.3s ease, background-color 0.3s ease',
+    transition: 'width 0.3s ease',
   },
   playButton: {
     width: 40,
@@ -258,8 +240,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 20,
-    transition: 'background-color 0.3s ease',
-    userSelect: 'none',
   },
   closeButton: {
     width: 30,
@@ -272,7 +252,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     alignItems: 'center',
     fontSize: 18,
-    userSelect: 'none',
   },
 };
 
