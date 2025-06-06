@@ -17,6 +17,8 @@ const DashboardPage: React.FC = () => {
   const { currentPodcast, setCurrentPodcast, isPlaying, setIsPlaying } = usePlayer();
 
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
+  const [externalResults, setExternalResults] = useState<Podcast[]>([]);
+  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -73,7 +75,7 @@ const DashboardPage: React.FC = () => {
                 />
                 <div style={styles.cardContent}>
                   <h3 style={styles.cardTitle}>{podcast.title}</h3>
-                  <p style={styles.cardDescription}>{podcast.description}</p>
+                  {/* <p style={styles.cardDescription}>{podcast.description}</p> */}
 
                   <button
                     onClick={() => togglePlay(podcast)}
@@ -89,6 +91,33 @@ const DashboardPage: React.FC = () => {
               </div>
             );
           })}
+          {externalResults.map((podcast) => {
+                            const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
+                            return (
+                              <div key={`externo-${podcast.id}`} style={styles.card}>
+                                <img
+                                  src={podcast.imageUrl}
+                                  alt={podcast.title}
+                                  style={styles.cardImage}
+                                  onError={(e) => (e.currentTarget.src = '/default.jpg')}
+                                />
+                                <div style={styles.cardContent}>
+                                  <h3 style={styles.cardTitle}>{podcast.title}</h3>
+                                  {/* <p style={styles.cardDescription}>{podcast.description}</p> */}
+                                  <button
+                                    onClick={() => togglePlay(podcast)}
+                                    style={{
+                                      ...styles.playButton,
+                                      boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
+                                    }}
+                                    aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
+                                  >
+                                    <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
         </div>
       </div>
     </div>
