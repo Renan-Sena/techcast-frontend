@@ -18,7 +18,10 @@ const PlayerBar: React.FC = () => {
   const [draggingProgress, setDraggingProgress] = useState(false);
 
   // Helper para montar URLs completas se necessário
-  const getFullUrl = (url: string) => url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  const getFullUrl = (url?: string) => {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
+  };
 
   useEffect(() => {
     if (!audioRef.current) return;
@@ -32,6 +35,10 @@ const PlayerBar: React.FC = () => {
     }
   };
 
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) setDuration(audioRef.current.duration);
+  };
+
   const formatTime = (time: number) => {
     if (!time || isNaN(time)) return '0:00';
     const minutes = Math.floor(time / 60);
@@ -39,7 +46,10 @@ const PlayerBar: React.FC = () => {
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   };
 
-  const togglePlay = () => setIsPlaying(!isPlaying);
+  const togglePlay = () => {
+    if (!currentPodcast) return;
+    setIsPlaying(!isPlaying);
+  };
 
   const handleClose = () => {
     setIsPlaying(false);
@@ -168,6 +178,7 @@ const PlayerBar: React.FC = () => {
         src={getFullUrl(currentPodcast.audioUrl)}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleClose}
+        onLoadedMetadata={handleLoadedMetadata}
       />
     </div>
   );
