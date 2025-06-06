@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import DashboardNavbar from './NavBars/ListenerNavbar';
-import { API_BASE_URL } from '../config/api';
+import axios from 'axios';
 import { Podcast } from '../types/Podcast';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 
 import { usePlayer } from './NavBars/PlayerContext';
+import { API_BASE_URL } from '../config/api';
 
 const DashboardPage: React.FC = () => {
   const location = useLocation();
@@ -24,16 +25,11 @@ const DashboardPage: React.FC = () => {
       try {
         setLoading(true);
         setError('');
-
-        const res = await fetch(`${API_BASE_URL}/api/episodes`);
-        console.log('fetch apisodes');
-        if (!res.ok) throw new Error('Erro ao carregar podcasts');
-        const data = await res.json();
-
-        setPodcasts(data);
+        const response = await axios.get(`${API_BASE_URL}/api/episodes`);
+        setPodcasts(response.data);
       } catch (err) {
-        console.error(err);
         setError('Erro ao carregar podcasts.');
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -73,6 +69,7 @@ const DashboardPage: React.FC = () => {
                   src={`${API_BASE_URL}${podcast.imageUrl}`}
                   alt={podcast.title}
                   style={styles.cardImage}
+                  onError={(e) => (e.currentTarget.src = '/default.jpg')}
                 />
                 <div style={styles.cardContent}>
                   <h3 style={styles.cardTitle}>{podcast.title}</h3>
@@ -84,6 +81,7 @@ const DashboardPage: React.FC = () => {
                       ...styles.playButton,
                       boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
                     }}
+                    aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
                   >
                     <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
                   </button>
@@ -172,7 +170,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     justifyContent: 'center',
     backgroundColor: '#1E90FF',
     transition: 'all 0.3s ease',
-  },
+  } as React.CSSProperties,
 };
 
 export default DashboardPage;

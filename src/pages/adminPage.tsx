@@ -43,15 +43,9 @@
     const [newEpisodeDescription, setNewEpisodeDescription] = useState('');
     const [newEpisodeAudio, setNewEpisodeAudio] = useState<File | null>(null);
     const [newEpisodeImage, setNewEpisodeImage] = useState<File | null>(null);
-
-
     const [activeTab, setActiveTab] = useState<'users' | 'episodes' | 'profile'>('users');
-
     const [profile, setProfile] = useState<Profile | null>(null);
-
-    // Novo estado para filtro de usuários
     const [userSearch, setUserSearch] = useState('');
-
     const [episodeSearch, setEpisodeSearch] = useState('');
     
     useEffect(() => {
@@ -73,6 +67,7 @@
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
+        console.log(resUsers);
 
         if (!resUsers.ok || !resEpisodes.ok) throw new Error('Erro ao buscar dados');
 
@@ -149,14 +144,13 @@
     const formData = new FormData();
     formData.append('title', newEpisodeTitle);
     formData.append('description', newEpisodeDescription);
-    formData.append('image', newEpisodeImage);  // ✅ agora correto
-    formData.append('audio', newEpisodeAudio);  // ✅ agora correto
+    formData.append('image', newEpisodeImage);  
+    formData.append('audio', newEpisodeAudio);  
     
     const res = await fetch(`${API_BASE_URL}/api/episodes`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
-        // ✅ Não colocar 'Content-Type'
       },
       body: formData,
     });
@@ -174,14 +168,10 @@
     setNewEpisodeImage(null);
     setNewEpisodeAudio(null);
 
-    fetchAdminData(); // Atualiza a lista
+    fetchAdminData();
   } catch (err: any) {
     alert(err.message);
   }
-
-  
-
-
 };
 
     // Ações de exemplo para alertas

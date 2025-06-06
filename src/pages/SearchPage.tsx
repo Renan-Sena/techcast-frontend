@@ -6,9 +6,7 @@ import { faPlay, faPause } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import { usePlayer } from './NavBars/PlayerContext';
 import { Podcast } from '../types/Podcast';
-import { API_BASE_URL } from '../config/api';  // <-- Importa a URL base da API
-import { fetchEpisodes } from '../services/api';
-
+import { API_BASE_URL } from '../config/api';
 
 const SearchPage: React.FC = () => {
   const location = useLocation();
@@ -18,6 +16,7 @@ const SearchPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredPodcasts, setFilteredPodcasts] = useState<Podcast[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<any[]>([]);
+  const [externalResults, setExternalResults] = useState<Podcast[]>([]);
 
   const { currentPodcast, setCurrentPodcast, isPlaying, setIsPlaying } = usePlayer();
 
@@ -25,15 +24,28 @@ const SearchPage: React.FC = () => {
     if (searchQuery === '') {
       setFilteredPodcasts([]);
       setFilteredUsers([]);
+      setExternalResults([]);
     } else {
+      // Busca podcasts locais
       axios
-        .get(`${API_BASE_URL}/api/episodes`, { params: { searchTerm: searchQuery } }) // <-- usa API_BASE_URL
-        .then((response) => {
-          setFilteredPodcasts(response.data);
+        .get(`${API_BASE_URL}/api/episodes`, { params: { searchTerm: searchQuery } })
+        .then((res) => setFilteredPodcasts(res.data))
+        .catch((err) => console.error('Erro ao buscar locais:', err));
+
+      // Busca podcasts externos
+      axios
+        .get(`${API_BASE_URL}/api/external-podcasts`, { params: { q: searchQuery } })
+        .then((res) => {
+          const formatted = res.data.episodes.map((ep: any) => ({
+            id: ep.id,
+            title: ep.title,
+            description: ep.description,
+            audioUrl: ep.audio,
+            imageUrl: ep.image,
+          }));
+          setExternalResults(formatted);
         })
-        .catch((error) => {
-          console.error('Erro ao buscar podcasts:', error);
-        });
+        .catch((err) => console.error('Erro ao buscar externos:', err));
     }
   }, [searchQuery]);
 
@@ -80,34 +92,66 @@ const SearchPage: React.FC = () => {
           </div>
         ) : (
           <div style={styles.podcastList}>
-            {filteredPodcasts.length > 0 ? (
-              filteredPodcasts.map((podcast) => {
-                const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
-                return (
-                  <div key={podcast.id} style={styles.card}>
-                    <img
-                      src={`${API_BASE_URL}${podcast.imageUrl}`} // <-- usa API_BASE_URL
-                      alt={podcast.title}
-                      style={styles.cardImage}
-                      onError={(e) => (e.currentTarget.src = '/default.jpg')}
-                    />
-                    <div style={styles.cardContent}>
-                      <h3 style={styles.cardTitle}>{podcast.title}</h3>
-                      <p style={styles.cardDescription}>{podcast.description}</p>
-                      <button
-                        onClick={() => togglePlay(podcast)}
-                        style={{
-                          ...styles.playButton,
-                          boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
-                        }}
-                        aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
-                      >
-                        <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
-                      </button>
+            {filteredPodcasts.length + externalResults.length > 0 ? (
+              <>
+                {/* Podcasts locais */}
+                {filteredPodcasts.map((podcast) => {
+                  const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
+                  return (
+                    <div key={`local-${podcast.id}`} style={styles.card}>
+                      <img
+                        src={`${API_BASE_URL}${podcast.imageUrl}`}
+                        alt={podcast.title}
+                        style={styles.cardImage}
+                        onError={(e) => (e.currentTarget.src = '/default.jpg')}
+                      />
+                      <div style={styles.cardContent}>
+                        <h3 style={styles.cardTitle}>{podcast.title}</h3>
+                        <p style={styles.cardDescription}>{podcast.description}</p>
+                        <button
+                          onClick={() => togglePlay(podcast)}
+                          style={{
+                            ...styles.playButton,
+                            boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
+                          }}
+                          aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
+                        >
+                          <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })
+                  );
+                })}
+
+                {/* Podcasts externos */}
+                {externalResults.map((podcast) => {
+                  const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
+                  return (
+                    <div key={`externo-${podcast.id}`} style={styles.card}>
+                      <img
+                        src={podcast.imageUrl}
+                        alt={podcast.title}
+                        style={styles.cardImage}
+                        onError={(e) => (e.currentTarget.src = '/default.jpg')}
+                      />
+                      <div style={styles.cardContent}>
+                        <h3 style={styles.cardTitle}>{podcast.title}</h3>
+                        <p style={styles.cardDescription}>{podcast.description}</p>
+                        <button
+                          onClick={() => togglePlay(podcast)}
+                          style={{
+                            ...styles.playButton,
+                            boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
+                          }}
+                          aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
+                        >
+                          <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
             ) : (
               <p style={{ color: '#bbb', textAlign: 'center', width: '100%' }}>
                 Nenhum podcast encontrado para sua pesquisa.
@@ -150,7 +194,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   cardTitle: {
     fontSize: '1.2rem',
-    margin: '0',
+    margin: 0,
     color: '#fff',
     fontWeight: 'bold',
   },

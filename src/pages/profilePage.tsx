@@ -8,8 +8,8 @@ import {
   faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
-import SidebarNavbar from './NavBars/ListenerNavbar'; // ajuste o caminho conforme seu projeto
-import { API_BASE_URL } from '../config/api'; // importando a URL base da API
+import SidebarNavbar from './NavBars/ListenerNavbar'; 
+import { API_BASE_URL } from '../config/api';
 
 interface User {
   id: number;
