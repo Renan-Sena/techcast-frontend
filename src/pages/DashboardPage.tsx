@@ -23,22 +23,30 @@ const DashboardPage: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchPodcasts = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        const response = await axios.get(`${API_BASE_URL}/api/external-podcasts`);
-        setPodcasts(response.data);
-      } catch (err) {
-        setError('Erro ao carregar podcasts.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchInternalAndExternal = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const [internalRes, externalRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/api/episodes`),
+        axios.get(`${API_BASE_URL}/api/external-podcasts`)
+      ]);
 
-    fetchPodcasts();
-  }, []);
+      setPodcasts(internalRes.data); // internos
+      setExternalResults(externalRes.data); // externos
+
+    } catch (err) {
+      setError('Erro ao carregar podcasts.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchInternalAndExternal();
+}, []);
+
 
   const togglePlay = (podcast: Podcast) => {
     if (currentPodcast?.id === podcast.id) {
