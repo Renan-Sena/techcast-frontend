@@ -27,7 +27,7 @@ const DashboardPage: React.FC = () => {
       try {
         setLoading(true);
         setError('');
-        const response = await axios.get(`${API_BASE_URL}/api/episodes`);
+        const response = await axios.get(`${API_BASE_URL}/api/external-podcasts`);
         setPodcasts(response.data);
       } catch (err) {
         setError('Erro ao carregar podcasts.');
@@ -92,32 +92,32 @@ const DashboardPage: React.FC = () => {
             );
           })}
           {externalResults.map((podcast) => {
-                            const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
-                            return (
-                              <div key={`externo-${podcast.id}`} style={styles.card}>
-                                <img
-                                  src={podcast.imageUrl}
-                                  alt={podcast.title}
-                                  style={styles.cardImage}
-                                  onError={(e) => (e.currentTarget.src = '/default.jpg')}
-                                />
-                                <div style={styles.cardContent}>
-                                  <h3 style={styles.cardTitle}>{podcast.title}</h3>
-                                  {/* <p style={styles.cardDescription}>{podcast.description}</p> */}
-                                  <button
-                                    onClick={() => togglePlay(podcast)}
-                                    style={{
-                                      ...styles.playButton,
-                                      boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
-                                    }}
-                                    aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
-                                  >
-                                    <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
-                                  </button>
-                                </div>
-                              </div>
-                            );
-                          })}
+              const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
+              return (
+                <div key={`externo-${podcast.id}`} style={styles.card}>
+                  <img
+                    src={podcast.imageUrl}
+                    alt={podcast.title}
+                    style={styles.cardImage}
+                    onError={(e) => (e.currentTarget.src = '/default.jpg')}
+                  />
+                  <div style={styles.cardContent}>
+                    <h3 style={styles.cardTitle}>{podcast.title}</h3>
+                    {/* <p style={styles.cardDescription}>{podcast.description}</p> */}
+                    <button
+                      onClick={() => togglePlay(podcast)}
+                      style={{
+                        ...styles.playButton,
+                        boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
+                      }}
+                      aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
+                    >
+                      <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
