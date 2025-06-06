@@ -23,29 +23,31 @@ const DashboardPage: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchInternalAndExternal = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        
-        const [internalRes, externalRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/api/episodes`),
-          axios.get(`${API_BASE_URL}/api/external-podcasts`)
-        ]);
+  const fetchInternalAndExternal = async () => {
+    try {
+      setLoading(true);
+      setError('');
 
-        setPodcasts(internalRes.data);
-        setExternalResults(externalRes.data);
+      const [internalRes, externalRes] = await Promise.all([
+        axios.get(`${API_BASE_URL}/api/episodes`),
+        axios.get(`${API_BASE_URL}/api/external-podcasts`, {
+          params: { q: 'tecnologia' }, // 👈 agora com parâmetro obrigatório
+        }),
+      ]);
 
-      } catch (err) {
-        setError('Erro ao carregar podcasts.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setPodcasts(internalRes.data); // internos
+      setExternalResults(externalRes.data.episodes); // 👈 .episodes, pois o backend responde com { episodes: [...] }
+    } catch (err) {
+      setError('Erro ao carregar podcasts.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    fetchInternalAndExternal();
-  }, []);
+  fetchInternalAndExternal();
+}, []);
+
 
   const togglePlay = (podcast: Podcast) => {
     if (currentPodcast?.id === podcast.id) {
