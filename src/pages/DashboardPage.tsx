@@ -23,30 +23,29 @@ const DashboardPage: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-  const fetchInternalAndExternal = async () => {
-    try {
-      setLoading(true);
-      setError('');
-      
-      const [internalRes, externalRes] = await Promise.all([
-        axios.get(`${API_BASE_URL}/api/episodes`),
-        axios.get(`${API_BASE_URL}/api/external-podcasts`)
-      ]);
+    const fetchInternalAndExternal = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        
+        const [internalRes, externalRes] = await Promise.all([
+          axios.get(`${API_BASE_URL}/api/episodes`),
+          axios.get(`${API_BASE_URL}/api/external-podcasts`)
+        ]);
 
-      setPodcasts(internalRes.data); // internos
-      setExternalResults(externalRes.data); // externos
+        setPodcasts(internalRes.data);
+        setExternalResults(externalRes.data);
 
-    } catch (err) {
-      setError('Erro ao carregar podcasts.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      } catch (err) {
+        setError('Erro ao carregar podcasts.');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchInternalAndExternal();
-}, []);
-
+    fetchInternalAndExternal();
+  }, []);
 
   const togglePlay = (podcast: Podcast) => {
     if (currentPodcast?.id === podcast.id) {
@@ -99,33 +98,35 @@ const DashboardPage: React.FC = () => {
               </div>
             );
           })}
-          {/* {externalResults.map((podcast) => {
-              const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
-              return (
-                <div key={`externo-${podcast.id}`} style={styles.card}>
-                  <img
-                    src={podcast.imageUrl}
-                    alt={podcast.title}
-                    style={styles.cardImage}
-                    onError={(e) => (e.currentTarget.src = '/default.jpg')}
-                  />
-                  <div style={styles.cardContent}>
-                    <h3 style={styles.cardTitle}>{podcast.title}</h3>
-                    <p style={styles.cardDescription}>{podcast.description}</p>
-                    <button
-                      onClick={() => togglePlay(podcast)}
-                      style={{
-                        ...styles.playButton,
-                        boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
-                      }}
-                      aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
-                    >
-                      <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
-                    </button>
-                  </div>
+
+          {externalResults.map((podcast) => {
+            const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
+            return (
+              <div key={podcast.id} style={styles.card}>
+                <img
+                  src={podcast.imageUrl}
+                  alt={podcast.title}
+                  style={styles.cardImage}
+                  onError={(e) => (e.currentTarget.src = '/default.jpg')}
+                />
+                <div style={styles.cardContent}>
+                  <h3 style={styles.cardTitle}>{podcast.title}</h3>
+                  {/* <p style={styles.cardDescription}>{podcast.description}</p> */}
+
+                  <button
+                    onClick={() => togglePlay(podcast)}
+                    style={{
+                      ...styles.playButton,
+                      boxShadow: isCurrentPlaying ? '0 0 10px rgba(30, 144, 255, 0.7)' : 'none',
+                    }}
+                    aria-label={isCurrentPlaying ? 'Pausar podcast' : 'Reproduzir podcast'}
+                  >
+                    <FontAwesomeIcon icon={isCurrentPlaying ? faPause : faPlay} color="#fff" />
+                  </button>
                 </div>
-              );
-            })} */}
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>
