@@ -91,7 +91,7 @@ const DashboardPage: React.FC = () => {
               </div>
             );
           })}
-          {externalResults.map((podcast) => {
+          {/* {externalResults.map((podcast) => {
               const isCurrentPlaying = currentPodcast?.id === podcast.id && isPlaying;
               return (
                 <div key={`externo-${podcast.id}`} style={styles.card}>
@@ -103,7 +103,7 @@ const DashboardPage: React.FC = () => {
                   />
                   <div style={styles.cardContent}>
                     <h3 style={styles.cardTitle}>{podcast.title}</h3>
-                    {/* <p style={styles.cardDescription}>{podcast.description}</p> */}
+                    <p style={styles.cardDescription}>{podcast.description}</p>
                     <button
                       onClick={() => togglePlay(podcast)}
                       style={{
@@ -117,7 +117,7 @@ const DashboardPage: React.FC = () => {
                   </div>
                 </div>
               );
-            })}
+            })} */}
         </div>
       </div>
     </div>
